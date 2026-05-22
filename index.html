@@ -319,8 +319,12 @@ async function init() {
   viewYear  = today.getFullYear();
   document.getElementById('inp-date').value = fmt8(today);
 
-  gistId = localStorage.getItem('mm_gist_id') || '';
+  const DEFAULT_GIST = 'b716e21fc1a066453d82d69349a0fbff';
+  gistId = localStorage.getItem('mm_gist_id') || DEFAULT_GIST;
   pat    = localStorage.getItem('mm_pat')     || '';
+  if (!localStorage.getItem('mm_gist_id') && DEFAULT_GIST) {
+    localStorage.setItem('mm_gist_id', DEFAULT_GIST);
+  }
 
   // Try to load config file (set by setup script)
   try {
