@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1B5E20">
+<title>บันทึกรายจ่าย - Mungmee</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Sarabun','Tahoma',sans-serif; background: #f0f4f0; color: #212121; font-size: 14px; }
+
+  .header {
+    background: linear-gradient(135deg, #1B5E20, #2E7D32);
+    color: white; text-align: center; padding: 20px 20px 0;
+    position: relative;
+  }
+  .header h1 { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
+  .sync-bar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; color: #C8E6C9; margin-bottom: 10px; flex-wrap: wrap; }
+  .sync-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 12px; cursor: pointer;
+    font-size: 11px; font-weight: bold; border: none; font-family: inherit;
+  }
+  .pill-nofile  { background: rgba(255,255,255,0.15); color: #E0E0E0; }
+  .pill-ok      { background: rgba(76,175,80,0.4);   color: #C8E6C9; }
+  .pill-saving  { background: rgba(255,193,7,0.35);  color: #FFF9C4; }
+  .pill-error   { background: rgba(198,40,40,0.4);   color: #FFCDD2; }
+  .pill-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .pill-dot.spin { background: transparent; border: 2px solid currentColor; border-top-color: transparent; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .btn-settings {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+    font-size: 17px; display: flex; align-items: center; justify-content: center;
+  }
+  .tab-bar { display: flex; background: rgba(0,0,0,0.2); border-radius: 10px 10px 0 0; overflow: hidden; max-width: 360px; margin: 0 auto; }
+  .tab-btn { flex: 1; padding: 10px 0; background: transparent; border: none; color: rgba(255,255,255,0.65); font-size: 13px; cursor: pointer; font-family: inherit; font-weight: bold; }
+  .tab-btn.active { background: white; color: #1B5E20; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 16px; }
+
+  /* Settings Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 14px; padding: 22px; width: 100%; max-width: 460px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); margin-top: 20px; }
+  .modal-title { font-size: 15px; font-weight: bold; color: #1B5E20; margin-bottom: 4px; border-left: 4px solid #4CAF50; padding-left: 10px; }
+  .modal-sub { font-size: 11px; color: #888; padding-left: 14px; margin-bottom: 16px; }
+  .modal label { display: block; font-size: 11px; color: #666; font-weight: bold; margin-bottom: 4px; }
+  .modal input { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; }
+  .modal input:focus { border-color: #4CAF50; }
+  .modal-hint { font-size: 11px; background: #E8F5E9; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; color: #424242; line-height: 1.7; }
+  .modal-hint b { color: #1B5E20; }
+  .modal-hint a { color: #1565C0; }
+  .modal-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-cancel { flex: 1; padding: 9px; border: 1px solid #ddd; border-radius: 7px; background: white; cursor: pointer; font-family: inherit; font-size: 13px; }
+  .btn-test   { flex: 1; padding: 9px; background: #1565C0; color: white; border: none; border-radius: 7px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: bold; }
+  .btn-save   { flex: 1; padding: 9px; background: #2E7D32; color: white; border: none; border-radius: 7px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: bold; }
+
+  /* Setup banner */
+  .setup-banner { background: white; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #1565C0; display: none; }
+  .setup-banner.show { display: block; }
+  .setup-title { font-size: 14px; font-weight: bold; color: #1565C0; margin-bottom: 8px; }
+  .setup-body { font-size: 12px; color: #555; line-height: 1.8; margin-bottom: 14px; }
+  .btn-setup { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg,#1565C0,#1976D2); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: bold; cursor: pointer; font-family: inherit; }
+
+  /* Add form */
+  .add-form { background: white; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .form-title { font-size: 14px; font-weight: bold; color: #1B5E20; border-left: 4px solid #4CAF50; padding-left: 10px; margin-bottom: 14px; }
+  .form-row       { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-row.full  { grid-template-columns: 1fr; }
+  .form-row.three { grid-template-columns: 1.2fr 1fr 1fr; }
+  label { display: block; font-size: 11px; color: #666; margin-bottom: 4px; font-weight: bold; }
+  input[type=date], input[type=number], input[type=text], input[type=url], select {
+    width: 100%; padding: 9px 10px; border: 1px solid #ddd; border-radius: 6px;
+    font-size: 14px; font-family: inherit; outline: none; background: white;
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus, select:focus { border-color: #4CAF50; }
+  .btn-add { width: 100%; padding: 12px; background: linear-gradient(135deg,#2E7D32,#4CAF50); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; font-family: inherit; margin-top: 4px; }
+
+  /* Budget */
+  .budget-card { background: white; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .budget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .budget-label { font-size: 13px; font-weight: bold; color: #424242; }
+  .budget-bar-wrap { background: #eee; border-radius: 20px; height: 10px; overflow: hidden; }
+  .budget-bar-fill { height: 100%; border-radius: 20px; transition: width .4s; background: #4CAF50; }
+  .budget-bar-fill.warn { background: #FF9800; }
+  .budget-bar-fill.over { background: #C62828; }
+  .budget-stats { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #666; }
+  .stat-val       { font-weight: bold; font-size: 14px; }
+  .stat-val.green { color: #2E7D32; }
+  .stat-val.red   { color: #C62828; }
+  .stat-val.orange{ color: #E65100; }
+
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+
+  .date-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
+  .nav-btn { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 18px; color: #1B5E20; font-weight: bold; min-width: 44px; }
+  .nav-label { font-size: 15px; font-weight: bold; color: #1B5E20; min-width: 160px; text-align: center; }
+
+  .expense-list { display: flex; flex-direction: column; gap: 8px; }
+  .expense-item { background: white; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 12px; }
+  .exp-icon   { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .exp-info   { flex: 1; min-width: 0; }
+  .exp-desc   { font-size: 13px; font-weight: bold; color: #212121; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .exp-meta   { font-size: 11px; color: #888; margin-top: 2px; }
+  .exp-amount { font-size: 15px; font-weight: bold; color: #C62828; white-space: nowrap; }
+  .btn-del    { background: none; border: none; cursor: pointer; color: #ccc; font-size: 18px; padding: 4px 6px; min-width: 32px; min-height: 32px; }
+  .btn-del:active { color: #C62828; }
+
+  .group-block { background: white; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+  .group-header { background: #1B5E20; color: white; padding: 11px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+  .group-header-label { font-size: 13px; font-weight: bold; }
+  .group-header-right { display: flex; align-items: center; gap: 10px; }
+  .group-total { font-size: 13px; font-weight: bold; }
+  .group-toggle { font-size: 11px; opacity: .7; }
+  .group-body { padding: 10px 12px; }
+  .group-body .expense-item { box-shadow: none; border-bottom: 1px solid #f0f0f0; border-radius: 0; padding: 10px 2px; }
+  .group-body .expense-item:last-child { border-bottom: none; }
+
+  .over-badge { font-size: 10px; background: #FFEBEE; color: #C62828; padding: 2px 6px; border-radius: 8px; font-weight: bold; margin-left: 6px; }
+  .ok-badge   { font-size: 10px; background: #E8F5E9; color: #2E7D32; padding: 2px 6px; border-radius: 8px; font-weight: bold; margin-left: 6px; }
+
+  .year-summary-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+  .year-kpi { background: white; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .year-kpi-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .year-kpi-val   { font-size: 18px; font-weight: bold; color: #1B5E20; }
+
+  .empty { text-align: center; color: #aaa; padding: 40px 20px; font-size: 13px; }
+  .empty-icon { font-size: 36px; margin-bottom: 8px; }
+
+  .footer { text-align: center; color: #aaa; font-size: 11px; padding: 16px 16px 32px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1B5E20; color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: bold; z-index: 999; transition: transform .3s; pointer-events: none; white-space: nowrap; max-width: 90vw; text-align: center; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .form-row.three { grid-template-columns: 1fr 1fr; }
+    .year-summary-grid { grid-template-columns: repeat(2,1fr); }
+    .header h1 { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="btn-settings" onclick="openSettings()">⚙️</button>
+  <h1>📒 บันทึกรายจ่าย</h1>
+  <div class="sync-bar">
+    <span>Mungmee · งบ 2,000 บ./วัน</span>
+    <button class="sync-pill pill-nofile" id="syncPill" onclick="openSettings()">
+      <span class="pill-dot" id="syncDot"></span>
+      <span id="syncLabel">ยังไม่ sync</span>
+    </button>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('daily')">รายวัน</button>
+    <button class="tab-btn" onclick="switchTab('monthly')">รายเดือน</button>
+    <button class="tab-btn" onclick="switchTab('yearly')">รายปี</button>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-title">⚙️ ตั้งค่า Sync ข้ามเครื่อง</div>
+    <div class="modal-sub">ใช้ GitHub Gist เก็บข้อมูล — ฟรี, ทำงานบน PC และ iPhone</div>
+
+    <label>GitHub Personal Access Token</label>
+    <input type="password" id="inp-pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+
+    <label>Gist ID</label>
+    <input type="text" id="inp-gist" placeholder="abc123def456..." autocomplete="off">
+
+    <div class="modal-hint">
+      <b>วิธีได้ Token + Gist ID:</b><br>
+      1. รันไฟล์ <b>Mungmee_GitHub_Setup.ps1</b> ใน Desktop/Database<br>
+      &nbsp;&nbsp;&nbsp;(คลิกขวา → Run with PowerShell)<br>
+      2. Script จะสร้างทุกอย่างให้อัตโนมัติ<br>
+      3. Copy Token + Gist ID จาก script มาใส่ที่นี่<br>
+      <br>
+      <b>URL สำหรับมือถือ:</b> <span id="pagesUrlDisplay" style="color:#1565C0;font-family:monospace;font-size:10px;">ยังไม่ได้ตั้งค่า</span>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeSettings()">ปิด</button>
+      <button class="btn-test"   onclick="testGist()">ทดสอบ</button>
+      <button class="btn-save"   onclick="saveSettings()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Setup banner -->
+<div class="setup-banner" id="setupBanner">
+  <div class="setup-title">🔗 เชื่อม sync เพื่อใช้ข้ามเครื่อง + มือถือ</div>
+  <div class="setup-body">
+    ขณะนี้ข้อมูลเก็บแค่ใน browser นี้<br>
+    รันไฟล์ <b>Mungmee_GitHub_Setup.ps1</b> แล้วนำ Token + Gist ID มาตั้งค่า
+  </div>
+  <button class="btn-setup" onclick="openSettings()">⚙️ ตั้งค่า Sync</button>
+</div>
+
+<div class="container">
+  <!-- Add Expense Form -->
+  <div class="add-form">
+    <div class="form-title">+ เพิ่มรายจ่าย</div>
+    <div class="form-row three">
+      <div>
+        <label>วันที่</label>
+        <input type="date" id="inp-date">
+      </div>
+      <div>
+        <label>จำนวนเงิน (บ.)</label>
+        <input type="number" id="inp-amount" placeholder="0" min="0" step="1" inputmode="decimal">
+      </div>
+      <div>
+        <label>หมวดหมู่</label>
+        <select id="inp-cat">
+          <option value="🍽️ อาหาร">🍽️ อาหาร</option>
+          <option value="🚗 เดินทาง">🚗 เดินทาง</option>
+          <option value="🛍️ ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
+          <option value="🎉 บันเทิง">🎉 บันเทิง</option>
+          <option value="💊 สุขภาพ">💊 สุขภาพ</option>
+          <option value="📚 การศึกษา">📚 การศึกษา</option>
+          <option value="🏠 บ้าน">🏠 บ้าน</option>
+          <option value="☕ กาแฟ">☕ กาแฟ</option>
+          <option value="💡 สาธารณูปโภค">💡 สาธารณูปโภค</option>
+          <option value="📦 อื่นๆ">📦 อื่นๆ</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row full">
+      <div>
+        <label>รายละเอียด</label>
+        <input type="text" id="inp-desc" placeholder="เช่น ข้าวกลางวัน, น้ำมัน...">
+      </div>
+    </div>
+    <button class="btn-add" onclick="addExpense()">บันทึกรายจ่าย</button>
+  </div>
+
+  <!-- DAILY -->
+  <div class="view-panel active" id="panel-daily">
+    <div class="date-nav">
+      <button class="nav-btn" onclick="shiftDay(-1)">‹</button>
+      <span class="nav-label" id="daily-label"></span>
+      <button class="nav-btn" onclick="shiftDay(1)">›</button>
+    </div>
+    <div class="budget-card">
+      <div class="budget-header">
+        <span class="budget-label">งบใช้จ่ายวันนี้</span>
+        <span id="daily-budget-text" style="font-size:13px;font-weight:bold;"></span>
+      </div>
+      <div class="budget-bar-wrap"><div class="budget-bar-fill" id="daily-bar"></div></div>
+      <div class="budget-stats">
+        <div><div style="font-size:11px;color:#888;">ใช้ไปแล้ว</div><div class="stat-val orange" id="daily-spent">0</div></div>
+        <div style="text-align:center;"><div style="font-size:11px;color:#888;">งบ/วัน</div><div class="stat-val" style="color:#555;">2,000</div></div>
+        <div style="text-align:right;"><div style="font-size:11px;color:#888;">คงเหลือ</div><div class="stat-val" id="daily-remain">2,000</div></div>
+      </div>
+    </div>
+    <div class="expense-list" id="daily-list"></div>
+  </div>
+
+  <!-- MONTHLY -->
+  <div class="view-panel" id="panel-monthly">
+    <div class="date-nav">
+      <button class="nav-btn" onclick="shiftMonth(-1)">‹</button>
+      <span class="nav-label" id="monthly-label"></span>
+      <button class="nav-btn" onclick="shiftMonth(1)">›</button>
+    </div>
+    <div class="budget-card">
+      <div class="budget-header"><span class="budget-label">ภาพรวมเดือนนี้</span></div>
+      <div class="budget-stats" style="justify-content:space-around;">
+        <div style="text-align:center;"><div style="font-size:11px;color:#888;">รายจ่ายรวม</div><div class="stat-val red" id="monthly-total">0</div></div>
+        <div style="text-align:center;"><div style="font-size:11px;color:#888;">จำนวนรายการ</div><div class="stat-val" style="color:#555;" id="monthly-count">0</div></div>
+        <div style="text-align:center;"><div style="font-size:11px;color:#888;">เฉลี่ย/วัน</div><div class="stat-val orange" id="monthly-avg">0</div></div>
+        <div style="text-align:center;"><div style="font-size:11px;color:#888;">วันเกินงบ</div><div class="stat-val red" id="monthly-over-days">0 วัน</div></div>
+      </div>
+    </div>
+    <div id="monthly-list"></div>
+  </div>
+
+  <!-- YEARLY -->
+  <div class="view-panel" id="panel-yearly">
+    <div class="date-nav">
+      <button class="nav-btn" onclick="shiftYear(-1)">‹</button>
+      <span class="nav-label" id="yearly-label"></span>
+      <button class="nav-btn" onclick="shiftYear(1)">›</button>
+    </div>
+    <div class="year-summary-grid" id="yearly-kpis"></div>
+    <div id="yearly-list"></div>
+  </div>
+</div>
+
+<div class="footer">Mungmee Expense Tracker &nbsp;|&nbsp; Sync ผ่าน GitHub Gist</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DAILY_BUDGET = 2000;
+const TH_M  = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const TH_MF = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const TH_D  = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+
+let expenses = [];
+let viewDay, viewMonth, viewYear;
+let gistId = '', pat = '';
+let syncTimer = null;
+let isSyncing = false;
+
+// ─── INIT ─────────────────────────────────────────────────
+async function init() {
+  const today = new Date();
+  viewDay   = fmt8(today);
+  viewMonth = today.getMonth();
+  viewYear  = today.getFullYear();
+  document.getElementById('inp-date').value = fmt8(today);
+
+  gistId = localStorage.getItem('mm_gist_id') || '';
+  pat    = localStorage.getItem('mm_pat')     || '';
+
+  // Try to load config file (set by setup script)
+  try {
+    const cfg = JSON.parse(localStorage.getItem('mm_config') || '{}');
+    if (cfg.pages_url) document.getElementById('pagesUrlDisplay').textContent = cfg.pages_url;
+  } catch {}
+
+  loadLocal();
+  renderAll();
+  updateSyncPill();
+
+  if (!gistId || !pat) {
+    document.getElementById('setupBanner').classList.add('show');
+  } else {
+    await syncFromGist(true);
+    schedulePoll();
+  }
+}
+
+// ─── GITHUB GIST API ──────────────────────────────────────
+function gistHeaders() {
+  return {
+    Authorization : 'token ' + pat,
+    Accept        : 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json'
+  };
+}
+
+async function syncFromGist(silent) {
+  if (!gistId || !pat || isSyncing) return;
+  isSyncing = true;
+  setSyncPill('saving', '🔄 sync…');
+  try {
+    const res = await fetch('https://api.github.com/gists/' + gistId, { headers: gistHeaders() });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data   = await res.json();
+    const remote = JSON.parse(data.files['expenses.json'].content || '[]');
+
+    // Merge: take union by id, remote wins on conflict
+    const map = {};
+    expenses.forEach(e => map[e.id] = e);
+    remote.forEach(e => map[e.id] = e);
+    expenses = Object.values(map).sort((a,b) => a.id - b.id);
+
+    saveLocal();
+    renderAll();
+    setSyncPill('ok', '✅ ซิงค์แล้ว');
+    if (!silent) showToast('✅ Sync เสร็จแล้ว');
+  } catch (err) {
+    setSyncPill('error', '⚠️ Sync ผิดพลาด');
+    if (!silent) showToast('❌ ' + err.message);
+  } finally {
+    isSyncing = false;
+  }
+}
+
+async function pushToGist() {
+  if (!gistId || !pat) return;
+  setSyncPill('saving', '💾 กำลังบันทึก…');
+  try {
+    const body = JSON.stringify({
+      files: { 'expenses.json': { content: JSON.stringify(expenses, null, 2) } }
+    });
+    const res = await fetch('https://api.github.com/gists/' + gistId, {
+      method: 'PATCH', headers: gistHeaders(), body
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    setSyncPill('ok', '✅ ซิงค์แล้ว');
+  } catch (err) {
+    setSyncPill('error', '⚠️ บันทึกไม่ได้');
+    showToast('⚠️ บันทึก Gist ไม่ได้: ' + err.message);
+  }
+}
+
+function schedulePoll() {
+  clearInterval(syncTimer);
+  syncTimer = setInterval(() => syncFromGist(true), 60000); // every 60s
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────
+function openSettings() {
+  document.getElementById('inp-pat').value  = pat;
+  document.getElementById('inp-gist').value = gistId;
+  const cfg = JSON.parse(localStorage.getItem('mm_config') || '{}');
+  if (cfg.pages_url) document.getElementById('pagesUrlDisplay').textContent = cfg.pages_url;
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+document.getElementById('settingsModal').addEventListener('click', e => { if (e.target === document.getElementById('settingsModal')) closeSettings(); });
+
+async function testGist() {
+  const testPat    = document.getElementById('inp-pat').value.trim();
+  const testGistId = document.getElementById('inp-gist').value.trim();
+  if (!testPat || !testGistId) { showToast('⚠️ กรอก Token + Gist ID ก่อน'); return; }
+  showToast('🔄 กำลังทดสอบ…');
+  try {
+    const res = await fetch('https://api.github.com/gists/' + testGistId, {
+      headers: { Authorization: 'token ' + testPat, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    showToast('✅ เชื่อมต่อได้! Gist: ' + (data.description || testGistId.slice(0,8)));
+  } catch (err) {
+    showToast('❌ ผิดพลาด: ' + err.message);
+  }
+}
+
+async function saveSettings() {
+  pat    = document.getElementById('inp-pat').value.trim();
+  gistId = document.getElementById('inp-gist').value.trim();
+  localStorage.setItem('mm_pat',     pat);
+  localStorage.setItem('mm_gist_id', gistId);
+  document.getElementById('setupBanner').classList.remove('show');
+  closeSettings();
+  updateSyncPill();
+  if (gistId && pat) {
+    await syncFromGist(false);
+    schedulePoll();
+  }
+}
+
+// ─── SYNC UI ──────────────────────────────────────────────
+function setSyncPill(state, label) {
+  const pill = document.getElementById('syncPill');
+  const dot  = document.getElementById('syncDot');
+  pill.className = 'sync-pill ' + ({nofile:'pill-nofile', ok:'pill-ok', saving:'pill-saving', error:'pill-error'}[state]||'pill-nofile');
+  dot.className  = 'pill-dot' + (state==='saving'?' spin':'');
+  document.getElementById('syncLabel').textContent = label;
+}
+function updateSyncPill() {
+  if (!gistId || !pat) setSyncPill('nofile', 'ยังไม่ sync');
+  else setSyncPill('ok', '✅ เชื่อมอยู่');
+}
+
+// ─── LOCAL STORAGE ────────────────────────────────────────
+function loadLocal() { try { expenses = JSON.parse(localStorage.getItem('mm_expenses')||'[]'); } catch { expenses = []; } }
+function saveLocal() { localStorage.setItem('mm_expenses', JSON.stringify(expenses)); }
+
+// ─── CRUD ─────────────────────────────────────────────────
+async function addExpense() {
+  const date   = document.getElementById('inp-date').value;
+  const amount = parseFloat(document.getElementById('inp-amount').value);
+  const cat    = document.getElementById('inp-cat').value;
+  const desc   = document.getElementById('inp-desc').value.trim();
+  if (!date)           { showToast('⚠️ เลือกวันที่ก่อน'); return; }
+  if (!amount || amount<=0) { showToast('⚠️ กรอกจำนวนเงิน'); return; }
+
+  const item = { id: Date.now(), date, amount, cat, desc: desc || cat.replace(/^\S+ /,'') };
+  expenses.push(item);
+  saveLocal();
+
+  document.getElementById('inp-amount').value = '';
+  document.getElementById('inp-desc').value   = '';
+  const d = new Date(date + 'T00:00:00');
+  viewDay = date; viewMonth = d.getMonth(); viewYear = d.getFullYear();
+  renderAll();
+  showToast('✅ บันทึกแล้ว');
+  await pushToGist();
+}
+
+async function deleteExpense(id) {
+  if (!confirm('ลบรายการนี้?')) return;
+  expenses = expenses.filter(e => e.id !== id);
+  saveLocal();
+  renderAll();
+  showToast('🗑️ ลบแล้ว');
+  await pushToGist();
+}
+
+// ─── RENDER ───────────────────────────────────────────────
+function renderAll() { renderDaily(); renderMonthly(); renderYearly(); }
+
+function renderDaily() {
+  const d     = new Date(viewDay + 'T00:00:00');
+  const today = fmt8(new Date());
+  const label = viewDay === today
+    ? 'วันนี้ – ' + d.getDate() + ' ' + TH_M[d.getMonth()] + ' ' + (d.getFullYear()+543)
+    : TH_D[d.getDay()] + ' ' + d.getDate() + ' ' + TH_M[d.getMonth()] + ' ' + (d.getFullYear()+543);
+  document.getElementById('daily-label').textContent = label;
+
+  const items  = expenses.filter(e => e.date===viewDay).sort((a,b)=>b.id-a.id);
+  const total  = items.reduce((s,e)=>s+e.amount,0);
+  const remain = DAILY_BUDGET - total;
+  const pct    = Math.min(total/DAILY_BUDGET*100, 100);
+
+  document.getElementById('daily-spent').textContent  = fmtN(total);
+  document.getElementById('daily-remain').textContent = fmtN(Math.abs(remain));
+  document.getElementById('daily-remain').className   = 'stat-val ' + (remain>=0?'green':'red');
+  const bt = document.getElementById('daily-budget-text');
+  bt.textContent = remain>=0 ? 'เหลือ '+fmtN(remain)+' บ.' : 'เกินงบ '+fmtN(-remain)+' บ.';
+  bt.style.color = remain>=0 ? '#2E7D32' : '#C62828';
+
+  const bar = document.getElementById('daily-bar');
+  bar.style.width = pct+'%';
+  bar.className = 'budget-bar-fill'+(pct>=100?' over':pct>=80?' warn':'');
+
+  document.getElementById('daily-list').innerHTML = !items.length
+    ? '<div class="empty"><div class="empty-icon">📭</div>ยังไม่มีรายจ่าย</div>'
+    : items.map(e=>expHTML(e,true)).join('');
+}
+function shiftDay(d) { const dt=new Date(viewDay+'T00:00:00'); dt.setDate(dt.getDate()+d); viewDay=fmt8(dt); viewMonth=dt.getMonth(); viewYear=dt.getFullYear(); renderDaily(); }
+
+function renderMonthly() {
+  document.getElementById('monthly-label').textContent = TH_MF[viewMonth] + ' ' + (viewYear+543);
+  const items = expenses.filter(e=>{ const d=new Date(e.date+'T00:00:00'); return d.getMonth()===viewMonth && d.getFullYear()===viewYear; });
+  const total = items.reduce((s,e)=>s+e.amount,0);
+  const days  = new Set(items.map(e=>e.date)).size;
+  const avg   = days ? total/days : 0;
+  const byday = grpDate(items);
+  const over  = Object.values(byday).filter(g=>g.reduce((s,e)=>s+e.amount,0)>DAILY_BUDGET).length;
+
+  document.getElementById('monthly-total').textContent     = fmtN(total);
+  document.getElementById('monthly-count').textContent     = items.length+' รายการ';
+  document.getElementById('monthly-avg').textContent       = fmtN(Math.round(avg));
+  document.getElementById('monthly-over-days').textContent = over+' วัน';
+
+  const el = document.getElementById('monthly-list');
+  if (!items.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>ไม่มีรายจ่ายในเดือนนี้</div>'; return; }
+  el.innerHTML = Object.keys(byday).sort((a,b)=>b.localeCompare(a)).map(date=>{
+    const g=byday[date].sort((a,b)=>b.id-a.id), t=g.reduce((s,e)=>s+e.amount,0);
+    const d=new Date(date+'T00:00:00');
+    return `<div class="group-block"><div class="group-header" onclick="toggleGroup(this)">
+      <span class="group-header-label">${TH_D[d.getDay()]} ${d.getDate()} ${TH_M[d.getMonth()]} ${t>DAILY_BUDGET?'<span class="over-badge">เกินงบ</span>':'<span class="ok-badge">ในงบ</span>'}</span>
+      <div class="group-header-right"><span class="group-total">${fmtN(t)} บ.</span><span class="group-toggle">▾</span></div>
+    </div><div class="group-body">${g.map(e=>expHTML(e,true)).join('')}</div></div>`;
+  }).join('');
+}
+function shiftMonth(d) { viewMonth+=d; if(viewMonth<0){viewMonth=11;viewYear--;} if(viewMonth>11){viewMonth=0;viewYear++;} renderMonthly(); }
+
+function renderYearly() {
+  document.getElementById('yearly-label').textContent = 'ปี '+(viewYear+543);
+  const items = expenses.filter(e=>new Date(e.date+'T00:00:00').getFullYear()===viewYear);
+  const total = items.reduce((s,e)=>s+e.amount,0);
+  const ms    = new Set(items.map(e=>new Date(e.date+'T00:00:00').getMonth())).size;
+  const mavg  = ms ? total/ms : 0;
+
+  document.getElementById('yearly-kpis').innerHTML = `
+    <div class="year-kpi"><div class="year-kpi-label">รายจ่ายรวม</div><div class="year-kpi-val" style="color:#C62828;">${fmtN(total)}</div><div style="font-size:11px;color:#aaa;">บาท</div></div>
+    <div class="year-kpi"><div class="year-kpi-label">จำนวนรายการ</div><div class="year-kpi-val">${items.length}</div><div style="font-size:11px;color:#aaa;">รายการ</div></div>
+    <div class="year-kpi"><div class="year-kpi-label">เฉลี่ย/เดือน</div><div class="year-kpi-val" style="color:#E65100;">${fmtN(Math.round(mavg))}</div><div style="font-size:11px;color:#aaa;">บาท</div></div>`;
+
+  const el = document.getElementById('yearly-list');
+  if (!items.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>ไม่มีรายจ่ายในปีนี้</div>'; return; }
+
+  const bym = {};
+  items.forEach(e=>{ const m=new Date(e.date+'T00:00:00').getMonth(); (bym[m]=bym[m]||[]).push(e); });
+  el.innerHTML = Object.keys(bym).sort((a,b)=>b-a).map(m=>{
+    const mi=bym[m].sort((a,b)=>b.id-a.id), mt=mi.reduce((s,e)=>s+e.amount,0);
+    const bd=grpDate(mi);
+    const rows=Object.keys(bd).sort((a,b)=>b.localeCompare(a)).map(date=>{
+      const g=bd[date].sort((a,b)=>b.id-a.id), t=g.reduce((s,e)=>s+e.amount,0);
+      const d=new Date(date+'T00:00:00');
+      return `<div style="padding:8px 4px;border-bottom:1px solid #f5f5f5;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:12px;font-weight:bold;color:#424242;">${d.getDate()} ${TH_M[d.getMonth()]} ${t>DAILY_BUDGET?'<span class="over-badge">เกินงบ</span>':'<span class="ok-badge">ในงบ</span>'}</span>
+          <span style="font-size:12px;font-weight:bold;color:#C62828;">${fmtN(t)} บ.</span>
+        </div>${g.map(e=>expHTML(e,false)).join('')}</div>`;
+    }).join('');
+    return `<div class="group-block"><div class="group-header" onclick="toggleGroup(this)">
+      <span class="group-header-label">${TH_MF[m]} ${viewYear+543}</span>
+      <div class="group-header-right"><span class="group-total">${fmtN(mt)} บ.</span><span class="group-toggle">▾</span></div>
+    </div><div class="group-body">${rows}</div></div>`;
+  }).join('');
+}
+function shiftYear(d) { viewYear+=d; renderYearly(); }
+
+// ─── HELPERS ──────────────────────────────────────────────
+function expHTML(e, showDel) {
+  const icon = e.cat.match(/^(\S+)/)[1];
+  const del  = showDel ? `<button class="btn-del" onclick="deleteExpense(${e.id})">✕</button>` : '';
+  return `<div class="expense-item">
+    <div class="exp-icon" style="background:#F1F8E9;">${icon}</div>
+    <div class="exp-info"><div class="exp-desc">${e.desc}</div><div class="exp-meta">${e.cat.replace(/^\S+ /,'')}${showDel?'':' · '+fmtDateShort(e.date)}</div></div>
+    <div class="exp-amount">${fmtN(e.amount)} บ.</div>${del}
+  </div>`;
+}
+function grpDate(arr) { const g={}; arr.forEach(e=>{(g[e.date]=g[e.date]||[]).push(e);}); return g; }
+function fmtN(n) { return Math.round(n).toLocaleString('th-TH'); }
+function fmt8(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDateShort(s) { const d=new Date(s+'T00:00:00'); return d.getDate()+' '+TH_M[d.getMonth()]; }
+function toggleGroup(h) { const b=h.nextElementSibling,a=h.querySelector('.group-toggle'),open=b.style.display!=='none'; b.style.display=open?'none':''; a.textContent=open?'▸':'▾'; }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['daily','monthly','yearly'][i]===tab));
+  document.querySelectorAll('.view-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  renderAll();
+}
+
+// Sync on window focus
+document.addEventListener('visibilitychange', () => { if (!document.hidden && gistId && pat) syncFromGist(true); });
+
+// Enter to add
+document.addEventListener('keydown', e => {
+  if (e.key==='Enter' && ['inp-amount','inp-desc'].includes(e.target.id)) addExpense();
+});
+
+init();
+</script>
+</body>
+</html>
