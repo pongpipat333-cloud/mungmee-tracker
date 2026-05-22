@@ -43,18 +43,17 @@
 
   .container { max-width: 700px; margin: 0 auto; padding: 16px; }
 
-  /* Settings Modal */
+  /* Modal */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; }
   .modal { background: white; border-radius: 14px; padding: 22px; width: 100%; max-width: 460px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); margin-top: 20px; }
   .modal-title { font-size: 15px; font-weight: bold; color: #1B5E20; margin-bottom: 4px; border-left: 4px solid #4CAF50; padding-left: 10px; }
   .modal-sub { font-size: 11px; color: #888; padding-left: 14px; margin-bottom: 16px; }
   .modal label { display: block; font-size: 11px; color: #666; font-weight: bold; margin-bottom: 4px; }
-  .modal input { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; }
-  .modal input:focus { border-color: #4CAF50; }
+  .modal input, .modal select { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-family: inherit; margin-bottom: 12px; outline: none; background: white; -webkit-appearance: none; appearance: none; }
+  .modal input:focus, .modal select:focus { border-color: #4CAF50; }
   .modal-hint { font-size: 11px; background: #E8F5E9; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; color: #424242; line-height: 1.7; }
   .modal-hint b { color: #1B5E20; }
-  .modal-hint a { color: #1565C0; }
   .modal-btns { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn-cancel { flex: 1; padding: 9px; border: 1px solid #ddd; border-radius: 7px; background: white; cursor: pointer; font-family: inherit; font-size: 13px; }
   .btn-test   { flex: 1; padding: 9px; background: #1565C0; color: white; border: none; border-radius: 7px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: bold; }
@@ -103,16 +102,20 @@
   .nav-btn { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 18px; color: #1B5E20; font-weight: bold; min-width: 44px; }
   .nav-label { font-size: 15px; font-weight: bold; color: #1B5E20; min-width: 160px; text-align: center; }
 
+  /* Expense items */
   .expense-list { display: flex; flex-direction: column; gap: 8px; }
-  .expense-item { background: white; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 12px; }
+  .expense-item { background: white; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 10px; }
   .exp-icon   { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
   .exp-info   { flex: 1; min-width: 0; }
   .exp-desc   { font-size: 13px; font-weight: bold; color: #212121; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .exp-meta   { font-size: 11px; color: #888; margin-top: 2px; }
   .exp-amount { font-size: 15px; font-weight: bold; color: #C62828; white-space: nowrap; }
-  .btn-del    { background: none; border: none; cursor: pointer; color: #ccc; font-size: 18px; padding: 4px 6px; min-width: 32px; min-height: 32px; }
+  .btn-del  { background: none; border: none; cursor: pointer; color: #ccc; font-size: 17px; padding: 4px 3px; min-width: 28px; min-height: 32px; }
   .btn-del:active { color: #C62828; }
+  .btn-edit { background: none; border: none; cursor: pointer; color: #bbb; font-size: 15px; padding: 4px 3px; min-width: 26px; min-height: 32px; }
+  .btn-edit:active { color: #1565C0; }
 
+  /* Grouped list */
   .group-block { background: white; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
   .group-header { background: #1B5E20; color: white; padding: 11px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
   .group-header-label { font-size: 13px; font-weight: bold; }
@@ -126,6 +129,7 @@
   .over-badge { font-size: 10px; background: #FFEBEE; color: #C62828; padding: 2px 6px; border-radius: 8px; font-weight: bold; margin-left: 6px; }
   .ok-badge   { font-size: 10px; background: #E8F5E9; color: #2E7D32; padding: 2px 6px; border-radius: 8px; font-weight: bold; margin-left: 6px; }
 
+  /* Year summary */
   .year-summary-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
   .year-kpi { background: white; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
   .year-kpi-label { font-size: 11px; color: #888; margin-bottom: 4px; }
@@ -135,9 +139,23 @@
   .empty-icon { font-size: 36px; margin-bottom: 8px; }
 
   .footer { text-align: center; color: #aaa; font-size: 11px; padding: 16px 16px 32px; }
-
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1B5E20; color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: bold; z-index: 999; transition: transform .3s; pointer-events: none; white-space: nowrap; max-width: 90vw; text-align: center; }
   .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── NEW: Filter bar ── */
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; align-items: center; }
+  .filter-chip { padding: 5px 11px; border-radius: 16px; border: 1.5px solid #ddd; background: white; font-size: 11px; cursor: pointer; font-family: inherit; color: #555; white-space: nowrap; transition: all .15s; }
+  .filter-chip.active { background: #1B5E20; color: white; border-color: #1B5E20; }
+  .search-wrap { flex: 1; min-width: 110px; max-width: 190px; position: relative; }
+  .search-input { width: 100%; padding: 6px 10px 6px 28px; border: 1.5px solid #ddd; border-radius: 16px; font-size: 12px; font-family: inherit; outline: none; background: white; -webkit-appearance: none; appearance: none; }
+  .search-input:focus { border-color: #4CAF50; }
+  .search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); font-size: 11px; pointer-events: none; color: #999; }
+
+  /* ── NEW: Info card (category breakdown + trend) ── */
+  .info-card { background: white; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .info-card-title { font-size: 13px; font-weight: bold; color: #1B5E20; border-left: 3px solid #4CAF50; padding-left: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .btn-export { padding: 5px 11px; background: white; border: 1.5px solid #4CAF50; border-radius: 14px; color: #2E7D32; font-size: 11px; font-weight: bold; cursor: pointer; font-family: inherit; }
+  .trend-wrap svg { display: block; width: 100%; }
 
   @media (max-width: 480px) {
     .form-row.three { grid-template-columns: 1fr 1fr; }
@@ -170,13 +188,10 @@
   <div class="modal">
     <div class="modal-title">⚙️ ตั้งค่า Sync ข้ามเครื่อง</div>
     <div class="modal-sub">ใช้ GitHub Gist เก็บข้อมูล — ฟรี, ทำงานบน PC และ iPhone</div>
-
     <label>GitHub Personal Access Token</label>
     <input type="password" id="inp-pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-
     <label>Gist ID</label>
     <input type="text" id="inp-gist" placeholder="abc123def456..." autocomplete="off">
-
     <div class="modal-hint">
       <b>วิธีได้ Token + Gist ID:</b><br>
       1. รันไฟล์ <b>Mungmee_GitHub_Setup.ps1</b> ใน Desktop/Database<br>
@@ -186,11 +201,40 @@
       <br>
       <b>URL สำหรับมือถือ:</b> <span id="pagesUrlDisplay" style="color:#1565C0;font-family:monospace;font-size:10px;">ยังไม่ได้ตั้งค่า</span>
     </div>
-
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeSettings()">ปิด</button>
       <button class="btn-test"   onclick="testGist()">ทดสอบ</button>
       <button class="btn-save"   onclick="saveSettings()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-title">✏️ แก้ไขรายจ่าย</div>
+    <div class="modal-sub">แก้ไขรายละเอียดแล้วกดบันทึก</div>
+    <label>วันที่</label>
+    <input type="date" id="edit-date">
+    <label>จำนวนเงิน (บ.)</label>
+    <input type="number" id="edit-amount" min="0" step="1" inputmode="decimal">
+    <label>หมวดหมู่</label>
+    <select id="edit-cat">
+      <option value="🏠 ที่พักอาศัย">🏠 ที่พักอาศัย</option>
+      <option value="🍽️ อาหาร">🍽️ อาหาร</option>
+      <option value="🚗 การเดินทาง">🚗 การเดินทาง</option>
+      <option value="👶 ลูก / ครอบครัว">👶 ลูก / ครอบครัว</option>
+      <option value="🏥 สุขภาพ">🏥 สุขภาพ</option>
+      <option value="📱 การสื่อสาร">📱 การสื่อสาร</option>
+      <option value="🎯 ส่วนตัว / อื่นๆ">🎯 ส่วนตัว / อื่นๆ</option>
+      <option value="🛍️ ช้อปปิ้ง">🛍️ ช้อปปิ้ง</option>
+      <option value="📦 อื่นๆ">📦 อื่นๆ</option>
+    </select>
+    <label>รายละเอียด</label>
+    <input type="text" id="edit-desc" placeholder="รายละเอียด...">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeEdit()">ยกเลิก</button>
+      <button class="btn-save"   onclick="saveEditExpense()">บันทึก</button>
     </div>
   </div>
 </div>
@@ -261,6 +305,7 @@
         <div style="text-align:right;"><div style="font-size:11px;color:#888;">คงเหลือ</div><div class="stat-val" id="daily-remain">2,000</div></div>
       </div>
     </div>
+    <div class="filter-bar" id="daily-filter-bar"></div>
     <div class="expense-list" id="daily-list"></div>
   </div>
 
@@ -280,6 +325,17 @@
         <div style="text-align:center;"><div style="font-size:11px;color:#888;">วันเกินงบ</div><div class="stat-val red" id="monthly-over-days">0 วัน</div></div>
       </div>
     </div>
+    <!-- Trend chart -->
+    <div class="info-card" id="trend-card" style="display:none;">
+      <div class="info-card-title">📊 รายจ่ายรายวัน <span style="font-size:10px;color:#aaa;">— เส้นประ = งบ 2,000 บ.</span></div>
+      <div class="trend-wrap" id="trend-chart"></div>
+    </div>
+    <!-- Category breakdown -->
+    <div class="info-card" id="monthly-cat-card" style="display:none;">
+      <div class="info-card-title">🏷️ แยกตามหมวดหมู่ <button class="btn-export" onclick="exportCSV('monthly')">⬇️ CSV</button></div>
+      <div id="monthly-cat-breakdown"></div>
+    </div>
+    <div class="filter-bar" id="monthly-filter-bar"></div>
     <div id="monthly-list"></div>
   </div>
 
@@ -291,6 +347,12 @@
       <button class="nav-btn" onclick="shiftYear(1)">›</button>
     </div>
     <div class="year-summary-grid" id="yearly-kpis"></div>
+    <!-- Category breakdown -->
+    <div class="info-card" id="yearly-cat-card" style="display:none;">
+      <div class="info-card-title">🏷️ แยกตามหมวดหมู่ <button class="btn-export" onclick="exportCSV('yearly')">⬇️ CSV</button></div>
+      <div id="yearly-cat-breakdown"></div>
+    </div>
+    <div class="filter-bar" id="yearly-filter-bar"></div>
     <div id="yearly-list"></div>
   </div>
 </div>
@@ -303,12 +365,24 @@ const DAILY_BUDGET = 2000;
 const TH_M  = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 const TH_MF = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 const TH_D  = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const CAT_COLORS = {
+  '🏠 ที่พักอาศัย':'#5C6BC0','🍽️ อาหาร':'#EF5350','🚗 การเดินทาง':'#FF7043',
+  '👶 ลูก / ครอบครัว':'#EC407A','🏥 สุขภาพ':'#26A69A','📱 การสื่อสาร':'#42A5F5',
+  '🎯 ส่วนตัว / อื่นๆ':'#AB47BC','🛍️ ช้อปปิ้ง':'#FF8A65','📦 อื่นๆ':'#78909C'
+};
+function catColor(cat) { return CAT_COLORS[cat] || '#78909C'; }
 
 let expenses = [];
 let viewDay, viewMonth, viewYear;
 let gistId = '', pat = '';
 let syncTimer = null;
 let isSyncing = false;
+
+// ── NEW state ──
+let editId = null;
+let filterCat  = { daily:'', monthly:'', yearly:'' };
+let searchText = { daily:'', monthly:'', yearly:'' };
+let _tabCats   = { daily:[], monthly:[], yearly:[] };
 
 // ─── INIT ─────────────────────────────────────────────────
 async function init() {
@@ -325,7 +399,6 @@ async function init() {
     localStorage.setItem('mm_gist_id', DEFAULT_GIST);
   }
 
-  // Try to load config file (set by setup script)
   try {
     const cfg = JSON.parse(localStorage.getItem('mm_config') || '{}');
     if (cfg.pages_url) document.getElementById('pagesUrlDisplay').textContent = cfg.pages_url;
@@ -357,17 +430,14 @@ async function syncFromGist(silent) {
   isSyncing = true;
   setSyncPill('saving', '🔄 sync…');
   try {
-    const res = await fetch('https://api.github.com/gists/' + gistId, { headers: gistHeaders() });
+    const res  = await fetch('https://api.github.com/gists/' + gistId, { headers: gistHeaders() });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data   = await res.json();
     const remote = JSON.parse(data.files['expenses.json'].content || '[]');
-
-    // Merge: take union by id, remote wins on conflict
     const map = {};
     expenses.forEach(e => map[e.id] = e);
     remote.forEach(e => map[e.id] = e);
     expenses = Object.values(map).sort((a,b) => a.id - b.id);
-
     saveLocal();
     renderAll();
     setSyncPill('ok', '✅ ซิงค์แล้ว');
@@ -400,7 +470,7 @@ async function pushToGist() {
 
 function schedulePoll() {
   clearInterval(syncTimer);
-  syncTimer = setInterval(() => syncFromGist(true), 60000); // every 60s
+  syncTimer = setInterval(() => syncFromGist(true), 60000);
 }
 
 // ─── SETTINGS ─────────────────────────────────────────────
@@ -449,7 +519,7 @@ async function saveSettings() {
 function setSyncPill(state, label) {
   const pill = document.getElementById('syncPill');
   const dot  = document.getElementById('syncDot');
-  pill.className = 'sync-pill ' + ({nofile:'pill-nofile', ok:'pill-ok', saving:'pill-saving', error:'pill-error'}[state]||'pill-nofile');
+  pill.className = 'sync-pill ' + ({nofile:'pill-nofile',ok:'pill-ok',saving:'pill-saving',error:'pill-error'}[state]||'pill-nofile');
   dot.className  = 'pill-dot' + (state==='saving'?' spin':'');
   document.getElementById('syncLabel').textContent = label;
 }
@@ -493,10 +563,97 @@ async function deleteExpense(id) {
   await pushToGist();
 }
 
+// ── EDIT ──
+function editExpense(id) {
+  const item = expenses.find(e => e.id === id);
+  if (!item) return;
+  editId = id;
+  document.getElementById('edit-date').value   = item.date;
+  document.getElementById('edit-amount').value = item.amount;
+  document.getElementById('edit-cat').value    = item.cat;
+  document.getElementById('edit-desc').value   = item.desc;
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit() {
+  editId = null;
+  document.getElementById('editModal').classList.remove('open');
+}
+document.getElementById('editModal').addEventListener('click', e => { if (e.target === document.getElementById('editModal')) closeEdit(); });
+
+async function saveEditExpense() {
+  const date   = document.getElementById('edit-date').value;
+  const amount = parseFloat(document.getElementById('edit-amount').value);
+  const cat    = document.getElementById('edit-cat').value;
+  const desc   = document.getElementById('edit-desc').value.trim();
+  if (!date || !amount || amount <= 0) { showToast('⚠️ กรอกข้อมูลให้ครบ'); return; }
+  const idx = expenses.findIndex(e => e.id === editId);
+  if (idx === -1) return;
+  expenses[idx] = { ...expenses[idx], date, amount, cat, desc: desc || cat.replace(/^\S+ /,'') };
+  saveLocal();
+  renderAll();
+  closeEdit();
+  showToast('✅ แก้ไขแล้ว');
+  await pushToGist();
+}
+
+// ── FILTER & SEARCH ──
+function applyFilter(items, tab) {
+  let result = items;
+  if (filterCat[tab])  result = result.filter(e => e.cat === filterCat[tab]);
+  if (searchText[tab]) {
+    const q = searchText[tab].toLowerCase();
+    result = result.filter(e => e.desc.toLowerCase().includes(q) || e.cat.toLowerCase().includes(q));
+  }
+  return result;
+}
+
+function renderFilterBar(containerId, items, tab) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const cats = [...new Set(items.map(e => e.cat))];
+  _tabCats[tab] = cats;
+  const sv = searchText[tab].replace(/"/g,'&quot;');
+  const chips = cats.map((cat, i) => {
+    const icon  = (cat.match(/^(\S+)/)||['',''])[1];
+    const label = cat.replace(/^\S+ /,'');
+    return `<button class="filter-chip${filterCat[tab]===cat?' active':''}" onclick="setFilter('${tab}',${i})">${icon} ${label}</button>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="search-${tab}" placeholder="ค้นหา..." value="${sv}" oninput="onSearch('${tab}',this.value)">
+    </div>
+    <button class="filter-chip${!filterCat[tab]?' active':''}" onclick="setFilter('${tab}',-1)">ทั้งหมด</button>
+    ${chips}`;
+}
+
+function setFilter(tab, idx) {
+  filterCat[tab] = idx >= 0 ? (_tabCats[tab][idx] || '') : '';
+  renderAll();
+}
+
+function onSearch(tab, val) {
+  searchText[tab] = val;
+  // Re-render only the list, preserve filter bar focus
+  if (tab === 'daily')        renderDailyList(expenses.filter(e => e.date===viewDay).sort((a,b)=>b.id-a.id), 'daily');
+  else if (tab === 'monthly') renderMonthlyList(monthlyItems(), 'monthly');
+  else                        renderYearlyList(yearlyItems(), 'yearly');
+}
+
+function monthlyItems() {
+  return expenses.filter(e => {
+    const d = new Date(e.date+'T00:00:00');
+    return d.getMonth()===viewMonth && d.getFullYear()===viewYear;
+  });
+}
+function yearlyItems() {
+  return expenses.filter(e => new Date(e.date+'T00:00:00').getFullYear()===viewYear);
+}
+
 // ─── RENDER ───────────────────────────────────────────────
 function renderAll() { renderDaily(); renderMonthly(); renderYearly(); }
 
-function renderDaily() {
+function renderDaily(skipExtras) {
   const d     = new Date(viewDay + 'T00:00:00');
   const today = fmt8(new Date());
   const label = viewDay === today
@@ -520,15 +677,22 @@ function renderDaily() {
   bar.style.width = pct+'%';
   bar.className = 'budget-bar-fill'+(pct>=100?' over':pct>=80?' warn':'');
 
-  document.getElementById('daily-list').innerHTML = !items.length
-    ? '<div class="empty"><div class="empty-icon">📭</div>ยังไม่มีรายจ่าย</div>'
-    : items.map(e=>expHTML(e,true)).join('');
+  if (!skipExtras) renderFilterBar('daily-filter-bar', items, 'daily');
+  renderDailyList(items, 'daily');
 }
+
+function renderDailyList(items, tab) {
+  const displayed = applyFilter(items, tab || 'daily');
+  document.getElementById('daily-list').innerHTML = !displayed.length
+    ? `<div class="empty"><div class="empty-icon">${searchText.daily||filterCat.daily?'🔍':'📭'}</div>${searchText.daily||filterCat.daily?'ไม่พบรายการ':'ยังไม่มีรายจ่าย'}</div>`
+    : displayed.map(e=>expHTML(e,true)).join('');
+}
+
 function shiftDay(d) { const dt=new Date(viewDay+'T00:00:00'); dt.setDate(dt.getDate()+d); viewDay=fmt8(dt); viewMonth=dt.getMonth(); viewYear=dt.getFullYear(); renderDaily(); }
 
-function renderMonthly() {
+function renderMonthly(skipExtras) {
   document.getElementById('monthly-label').textContent = TH_MF[viewMonth] + ' ' + (viewYear+543);
-  const items = expenses.filter(e=>{ const d=new Date(e.date+'T00:00:00'); return d.getMonth()===viewMonth && d.getFullYear()===viewYear; });
+  const items = monthlyItems();
   const total = items.reduce((s,e)=>s+e.amount,0);
   const days  = new Set(items.map(e=>e.date)).size;
   const avg   = days ? total/days : 0;
@@ -540,8 +704,34 @@ function renderMonthly() {
   document.getElementById('monthly-avg').textContent       = fmtN(Math.round(avg));
   document.getElementById('monthly-over-days').textContent = over+' วัน';
 
+  if (!skipExtras) {
+    const pm = viewMonth===0?11:viewMonth-1;
+    const py = viewMonth===0?viewYear-1:viewYear;
+    const prevItems = expenses.filter(e=>{const d=new Date(e.date+'T00:00:00');return d.getMonth()===pm&&d.getFullYear()===py;});
+
+    renderTrendChart(items);
+    renderCatBreakdown('monthly-cat-breakdown', items, prevItems);
+    document.getElementById('trend-card').style.display    = items.length ? '' : 'none';
+    document.getElementById('monthly-cat-card').style.display = items.length ? '' : 'none';
+    renderFilterBar('monthly-filter-bar', items, 'monthly');
+  }
+
+  renderMonthlyList(items, 'monthly');
+}
+
+function renderMonthlyList(items, tab) {
+  const displayed = applyFilter(items, tab || 'monthly');
   const el = document.getElementById('monthly-list');
   if (!items.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>ไม่มีรายจ่ายในเดือนนี้</div>'; return; }
+
+  if (filterCat.monthly || searchText.monthly) {
+    el.innerHTML = !displayed.length
+      ? '<div class="empty"><div class="empty-icon">🔍</div>ไม่พบรายการ</div>'
+      : `<div class="expense-list">${displayed.sort((a,b)=>b.id-a.id).map(e=>expHTML(e,true)).join('')}</div>`;
+    return;
+  }
+
+  const byday = grpDate(items);
   el.innerHTML = Object.keys(byday).sort((a,b)=>b.localeCompare(a)).map(date=>{
     const g=byday[date].sort((a,b)=>b.id-a.id), t=g.reduce((s,e)=>s+e.amount,0);
     const d=new Date(date+'T00:00:00');
@@ -551,11 +741,12 @@ function renderMonthly() {
     </div><div class="group-body">${g.map(e=>expHTML(e,true)).join('')}</div></div>`;
   }).join('');
 }
+
 function shiftMonth(d) { viewMonth+=d; if(viewMonth<0){viewMonth=11;viewYear--;} if(viewMonth>11){viewMonth=0;viewYear++;} renderMonthly(); }
 
-function renderYearly() {
+function renderYearly(skipExtras) {
   document.getElementById('yearly-label').textContent = 'ปี '+(viewYear+543);
-  const items = expenses.filter(e=>new Date(e.date+'T00:00:00').getFullYear()===viewYear);
+  const items = yearlyItems();
   const total = items.reduce((s,e)=>s+e.amount,0);
   const ms    = new Set(items.map(e=>new Date(e.date+'T00:00:00').getMonth())).size;
   const mavg  = ms ? total/ms : 0;
@@ -565,11 +756,30 @@ function renderYearly() {
     <div class="year-kpi"><div class="year-kpi-label">จำนวนรายการ</div><div class="year-kpi-val">${items.length}</div><div style="font-size:11px;color:#aaa;">รายการ</div></div>
     <div class="year-kpi"><div class="year-kpi-label">เฉลี่ย/เดือน</div><div class="year-kpi-val" style="color:#E65100;">${fmtN(Math.round(mavg))}</div><div style="font-size:11px;color:#aaa;">บาท</div></div>`;
 
+  if (!skipExtras) {
+    const prevItems = expenses.filter(e=>new Date(e.date+'T00:00:00').getFullYear()===viewYear-1);
+    renderCatBreakdown('yearly-cat-breakdown', items, prevItems);
+    document.getElementById('yearly-cat-card').style.display = items.length ? '' : 'none';
+    renderFilterBar('yearly-filter-bar', items, 'yearly');
+  }
+
+  renderYearlyList(items, 'yearly');
+}
+
+function renderYearlyList(items, tab) {
+  const displayed = applyFilter(items, tab || 'yearly');
   const el = document.getElementById('yearly-list');
   if (!items.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📭</div>ไม่มีรายจ่ายในปีนี้</div>'; return; }
 
+  if (filterCat.yearly || searchText.yearly) {
+    el.innerHTML = !displayed.length
+      ? '<div class="empty"><div class="empty-icon">🔍</div>ไม่พบรายการ</div>'
+      : `<div class="expense-list">${displayed.sort((a,b)=>b.id-a.id).map(e=>expHTML(e,true)).join('')}</div>`;
+    return;
+  }
+
   const bym = {};
-  items.forEach(e=>{ const m=new Date(e.date+'T00:00:00').getMonth(); (bym[m]=bym[m]||[]).push(e); });
+  items.forEach(e=>{const m=new Date(e.date+'T00:00:00').getMonth();(bym[m]=bym[m]||[]).push(e);});
   el.innerHTML = Object.keys(bym).sort((a,b)=>b-a).map(m=>{
     const mi=bym[m].sort((a,b)=>b.id-a.id), mt=mi.reduce((s,e)=>s+e.amount,0);
     const bd=grpDate(mi);
@@ -590,14 +800,113 @@ function renderYearly() {
 }
 function shiftYear(d) { viewYear+=d; renderYearly(); }
 
+// ─── CATEGORY BREAKDOWN ───────────────────────────────────
+function renderCatBreakdown(containerId, items, prevItems) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!items.length) { el.innerHTML='<div style="color:#aaa;font-size:12px;text-align:center;padding:8px;">ไม่มีข้อมูล</div>'; return; }
+
+  const totals = {}, prev = {};
+  items.forEach(e => { totals[e.cat] = (totals[e.cat]||0) + e.amount; });
+  (prevItems||[]).forEach(e => { prev[e.cat] = (prev[e.cat]||0) + e.amount; });
+  const grand = Object.values(totals).reduce((s,v)=>s+v,0);
+  const sorted = Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+
+  el.innerHTML = sorted.map(([cat,amt])=>{
+    const pct  = grand ? amt/grand*100 : 0;
+    const p    = prev[cat]||0;
+    const diff = amt - p;
+    const deltaHTML = p > 0
+      ? (diff > 0 ? `<span style="color:#C62828;font-size:10px;"> ▲${fmtN(diff)}</span>`
+        : diff < 0 ? `<span style="color:#2E7D32;font-size:10px;"> ▼${fmtN(-diff)}</span>` : '')
+      : '';
+    const icon  = (cat.match(/^(\S+)/)||['',''])[1];
+    const label = cat.replace(/^\S+ /,'');
+    const color = catColor(cat);
+    return `<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+        <span style="font-size:12px;color:#424242;">${icon} ${label}</span>
+        <span style="font-size:12px;font-weight:bold;color:#424242;">${fmtN(amt)} บ. <span style="color:#999;font-weight:normal;">${pct.toFixed(0)}%</span>${deltaHTML}</span>
+      </div>
+      <div style="background:#f0f0f0;border-radius:4px;height:8px;overflow:hidden;">
+        <div style="width:${pct.toFixed(1)}%;height:100%;background:${color};border-radius:4px;transition:width .5s;"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── TREND CHART ──────────────────────────────────────────
+function renderTrendChart(items) {
+  const el = document.getElementById('trend-chart');
+  if (!el) return;
+  const today = fmt8(new Date());
+  const dim   = new Date(viewYear, viewMonth+1, 0).getDate();
+  const days  = [];
+  for (let i=1; i<=dim; i++) {
+    const date = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+    const t = items.filter(e=>e.date===date).reduce((s,e)=>s+e.amount,0);
+    days.push({ day:i, date, total:t });
+  }
+  const maxVal = Math.max(...days.map(d=>d.total), DAILY_BUDGET);
+  const W=320, H=72, gap=W/dim;
+  const bW = Math.max(2, gap*0.75);
+
+  const bars = days.map((d,i)=>{
+    if (!d.total) return '';
+    const h = Math.max(d.total/maxVal*H, 2);
+    const x = (i*gap + (gap-bW)/2).toFixed(1);
+    const y = (H-h).toFixed(1);
+    const color = d.total>DAILY_BUDGET ? '#C62828' : d.total>DAILY_BUDGET*0.8 ? '#FF9800' : '#4CAF50';
+    const isToday = d.date===today ? ' opacity="1" stroke="#1B5E20" stroke-width="0.5"' : '';
+    return `<rect x="${x}" y="${y}" width="${bW.toFixed(1)}" height="${h.toFixed(1)}" fill="${color}" rx="1.5"${isToday}/>`;
+  }).join('');
+
+  const bY  = (H - DAILY_BUDGET/maxVal*H).toFixed(1);
+  const bLine = `<line x1="0" y1="${bY}" x2="${W}" y2="${bY}" stroke="#FF9800" stroke-width="1" stroke-dasharray="3,3" opacity="0.8"/>`;
+
+  const lblStep = dim<=15 ? 4 : dim<=20 ? 5 : 7;
+  const labels  = days.filter(d=>d.day===1||d.day%lblStep===0).map(d=>{
+    const x = ((d.day-1)*gap + gap/2).toFixed(1);
+    return `<text x="${x}" y="${H+12}" text-anchor="middle" font-size="8" fill="#bbb">${d.day}</text>`;
+  }).join('');
+
+  el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H+15}" style="height:88px;">${bars}${bLine}${labels}</svg>`;
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────
+function exportCSV(scope) {
+  let data;
+  if (scope==='monthly') {
+    data = monthlyItems();
+  } else if (scope==='yearly') {
+    data = yearlyItems();
+  } else {
+    data = [...expenses];
+  }
+  if (!data.length) { showToast('⚠️ ไม่มีข้อมูล'); return; }
+
+  const rows = data.sort((a,b)=>a.date.localeCompare(b.date))
+    .map(e=>`${e.date},${e.amount},"${e.cat}","${e.desc.replace(/"/g,'""')}"`)
+    .join('\n');
+  const csv  = '﻿' + 'วันที่,จำนวนเงิน,หมวดหมู่,รายละเอียด\n' + rows;
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const name = scope==='monthly' ? `${TH_MF[viewMonth]}_${viewYear+543}` : scope==='yearly' ? `ปี${viewYear+543}` : 'ทั้งหมด';
+  a.href = url; a.download = `mungmee_${name}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇️ ดาวน์โหลด CSV แล้ว');
+}
+
 // ─── HELPERS ──────────────────────────────────────────────
 function expHTML(e, showDel) {
-  const icon = e.cat.match(/^(\S+)/)[1];
-  const del  = showDel ? `<button class="btn-del" onclick="deleteExpense(${e.id})">✕</button>` : '';
+  const icon = (e.cat.match(/^(\S+)/)||['',''])[1];
+  const edit = showDel ? `<button class="btn-edit" onclick="editExpense(${e.id})">✏️</button>` : '';
+  const del  = showDel ? `<button class="btn-del"  onclick="deleteExpense(${e.id})">✕</button>` : '';
   return `<div class="expense-item">
     <div class="exp-icon" style="background:#F1F8E9;">${icon}</div>
     <div class="exp-info"><div class="exp-desc">${e.desc}</div><div class="exp-meta">${e.cat.replace(/^\S+ /,'')}${showDel?'':' · '+fmtDateShort(e.date)}</div></div>
-    <div class="exp-amount">${fmtN(e.amount)} บ.</div>${del}
+    <div class="exp-amount">${fmtN(e.amount)} บ.</div>${edit}${del}
   </div>`;
 }
 function grpDate(arr) { const g={}; arr.forEach(e=>{(g[e.date]=g[e.date]||[]).push(e);}); return g; }
@@ -613,10 +922,7 @@ function switchTab(tab) {
   renderAll();
 }
 
-// Sync on window focus
 document.addEventListener('visibilitychange', () => { if (!document.hidden && gistId && pat) syncFromGist(true); });
-
-// Enter to add
 document.addEventListener('keydown', e => {
   if (e.key==='Enter' && ['inp-amount','inp-desc'].includes(e.target.id)) addExpense();
 });
